@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  magasincentral-db:
+    image: postgres:15
+    container_name: magasincentral-db
+    restart: always
+    environment:
+      POSTGRES_USER: magasinuser
+      POSTGRES_PASSWORD: magasinpass
+      POSTGRES_DB: magasincentraldb
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  magasincentral-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: magasincentral-app
+    depends_on:
+      - magasincentral-db
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+    ports:
+      - "8080:80"
+
+volumes:
+  db_data:

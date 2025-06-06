@@ -1,0 +1,59 @@
+name: Deploy to production virtual machine
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-test-publish-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build the project
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Format check (lint)
+        run: dotnet format --verify-no-changes
+        continue-on-error: true
+
+      - name: Run tests
+        run: dotnet test --no-build --verbosity normal
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: docker build -t magasincentral .
+
+      - name: Tag Docker image for Docker Hub
+        run: docker tag magasincentral ${{ secrets.DOCKERHUB_USERNAME }}/magasincentral:latest
+
+      - name: Push Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/magasincentral:latest
+
+      - name: SSH to remote VM and deploy Docker image
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 10.194.32.236
+          username: log430
+          password: ${{ secrets.VM_PASSWORD }}
+          script: |
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/magasincentral:latest
+            docker stop magasincentral || true
+            docker rm magasincentral || true
+            docker run -d -p 80:80 --name magasincentral ${{ secrets.DOCKERHUB_USERNAME }}/magasincentral:latest
