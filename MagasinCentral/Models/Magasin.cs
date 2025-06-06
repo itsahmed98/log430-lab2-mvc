@@ -36,5 +36,7 @@ namespace MagasinCentral.Models
         /// Collection des ventes effectuées dans ce magasin.
         /// </summary>
         public ICollection<Vente> Ventes { get; set; } = new List<Vente>();
+
+        public ICollection<DemandeReapprovisionnement> DemandesReapprovisionnement { get; set; } = new List<DemandeReapprovisionnement>();
     }
 }

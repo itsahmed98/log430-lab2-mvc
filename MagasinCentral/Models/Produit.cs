@@ -44,5 +44,10 @@ namespace MagasinCentral.Models
         public ICollection<Vente> Ventes { get; set; } = new List<Vente>();
 
         public StockCentral? StockCentral { get; set; }
+
+        /// <summary>
+        /// Collection des demandes de réapprovisionnement associées à ce produit.
+        /// </summary>
+        public ICollection<DemandeReapprovisionnement> DemandesReapprovisionnement { get; set; } = new List<DemandeReapprovisionnement>();
     }
 }

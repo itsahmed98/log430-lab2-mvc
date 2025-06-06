@@ -38,6 +38,11 @@ namespace MagasinCentral.Data
         /// </summary>
         public DbSet<Vente> Ventes { get; set; } = null!;
 
+        /// <summary>
+        /// Table des demandes de réapprovisionnement.
+        /// </summary>
+        public DbSet<DemandeReapprovisionnement> DemandesReapprovisionnement { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -52,6 +57,18 @@ namespace MagasinCentral.Data
                 .HasOne(sc => sc.Produit)
                 .WithOne(p => p.StockCentral)
                 .HasForeignKey<StockCentral>(sc => sc.ProduitId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<DemandeReapprovisionnement>()
+                .HasOne(d => d.Magasin)
+                .WithMany(m => m.DemandesReapprovisionnement)
+                .HasForeignKey(d => d.MagasinId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<DemandeReapprovisionnement>()
+                .HasOne(d => d.Produit)
+                .WithMany(p => p.DemandesReapprovisionnement)
+                .HasForeignKey(d => d.ProduitId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             DataSeeder.Seed(modelBuilder);

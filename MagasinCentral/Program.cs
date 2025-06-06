@@ -9,6 +9,7 @@ builder.Services.AddDbContext<MagasinDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IRapportService, RapportService>();
+builder.Services.AddScoped<IReapprovisionnementService, ReapprovisionnementService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
