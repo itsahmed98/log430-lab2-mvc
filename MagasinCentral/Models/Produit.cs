@@ -34,6 +34,12 @@ namespace MagasinCentral.Models
         public decimal Prix { get; set; }
 
         /// <summary>
+        /// Description du produit.
+        /// </summary>
+        [MaxLength(500)]
+        public string? Description { get; set; }
+
+        /// <summary>
         /// Collection des stocks locaux par magasin.
         /// </summary>
         public ICollection<MagasinStockProduit> StocksMagasin { get; set; } = new List<MagasinStockProduit>();

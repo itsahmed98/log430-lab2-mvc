@@ -11,6 +11,7 @@ builder.Services.AddDbContext<MagasinDbContext>(options =>
 builder.Services.AddScoped<IRapportService, RapportService>();
 builder.Services.AddScoped<IReapprovisionnementService, ReapprovisionnementService>();
 builder.Services.AddScoped<IPerformancesService, PerformancesService>();
+builder.Services.AddScoped<IProduitService, ProduitService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

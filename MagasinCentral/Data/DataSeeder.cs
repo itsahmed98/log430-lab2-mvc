@@ -14,10 +14,10 @@ namespace MagasinCentral.Data
         {
             var produits = new List<Produit>
             {
-                new Produit { ProduitId = 1, Nom = "Stylo",        Categorie = "Papeterie",     Prix = 1.50m },
-                new Produit { ProduitId = 2, Nom = "Carnet",       Categorie = "Papeterie",     Prix = 3.75m },
-                new Produit { ProduitId = 3, Nom = "Clé USB 16 Go", Categorie = "Électronique",  Prix = 12.00m },
-                new Produit { ProduitId = 4, Nom = "Casque Audio",  Categorie = "Électronique",  Prix = 45.00m }
+                new Produit { ProduitId = 1, Nom = "Stylo",        Categorie = "Papeterie",     Prix = 1.50m, Description = "Stylo à bille bleu" },
+                new Produit { ProduitId = 2, Nom = "Carnet",       Categorie = "Papeterie",     Prix = 3.75m, Description = "Carnet de notes A5" },
+                new Produit { ProduitId = 3, Nom = "Clé USB 16 Go", Categorie = "Électronique",  Prix = 12.00m, Description = "Clé USB 16 Go avec protection" },
+                new Produit { ProduitId = 4, Nom = "Casque Audio",  Categorie = "Électronique",  Prix = 45.00m, Description = "Casque audio sans fil avec réduction de bruit" }
             };
             modelBuilder.Entity<Produit>().HasData(produits);
 
@@ -35,6 +35,17 @@ namespace MagasinCentral.Data
             {
                 foreach (var produit in produits)
                 {
+                    // Créer des produits en surstock ou en rupture de stock selon les conditions
+                    int quantiteInitiale = 50;
+                    if (magasin.MagasinId == 1 && produit.ProduitId == 1)
+                    {
+                        quantiteInitiale = 0;
+                    }
+                    else if (magasin.MagasinId == 1 && produit.ProduitId == 2)
+                    {
+                        quantiteInitiale = 150;
+                    }
+
                     stockLocaux.Add(new MagasinStockProduit
                     {
                         MagasinId = magasin.MagasinId,
