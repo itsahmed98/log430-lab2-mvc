@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MagasinCentral.Models
 {
@@ -9,6 +10,7 @@ namespace MagasinCentral.Models
     public class StockCentral
     {
         [Key]
+        [ForeignKey(nameof(Produit))]
         public int ProduitId { get; set; }
 
         /// <summary>

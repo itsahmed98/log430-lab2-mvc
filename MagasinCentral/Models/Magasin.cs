@@ -30,7 +30,7 @@ namespace MagasinCentral.Models
         /// <summary>
         /// Collection des stocks locaux par produit.
         /// </summary>
-        public ICollection<MagasinStockProduit> StockProduits { get; set; } = new List<MagasinStockProduit>();
+        public ICollection<MagasinStockProduit> StocksProduits { get; set; } = new List<MagasinStockProduit>();
 
         /// <summary>
         /// Collection des ventes effectuées dans ce magasin.

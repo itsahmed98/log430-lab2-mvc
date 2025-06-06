@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace MagasinCentral.Models
 {
     /// <summary>
-    /// DTO (Data Transfer Object) pour la vue du rapport UC1.
+    /// DTO (Data Transfer Object) pour la vue du rapport.
     /// </summary>
     public class RapportDto
     {

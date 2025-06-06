@@ -42,5 +42,7 @@ namespace MagasinCentral.Models
         /// Collection des ventes associées à ce produit.
         /// </summary>
         public ICollection<Vente> Ventes { get; set; } = new List<Vente>();
+
+        public StockCentral? StockCentral { get; set; }
     }
 }

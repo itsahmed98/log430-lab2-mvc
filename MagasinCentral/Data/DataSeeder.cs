@@ -6,33 +6,30 @@ using Microsoft.EntityFrameworkCore;
 namespace MagasinCentral.Data
 {
     /// <summary>
-    /// Fournit des données initiales pour la base de données.
+    /// Fournit des données initiales (4 magasins, 4 produits, stocks, ventes) pour la base.
     /// </summary>
     public static class DataSeeder
     {
         public static void Seed(ModelBuilder modelBuilder)
         {
-            // 1. Produits
             var produits = new List<Produit>
             {
-                new Produit { ProduitId = 1, Nom = "Stylo",       Categorie = "Papeterie",   Prix = 1.50m },
-                new Produit { ProduitId = 2, Nom = "Carnet",      Categorie = "Papeterie",   Prix = 3.75m },
-                new Produit { ProduitId = 3, Nom = "Clé USB 16Go", Categorie = "Électronique", Prix = 12.00m },
-                new Produit { ProduitId = 4, Nom = "Casque Audio", Categorie = "Électronique", Prix = 45.00m }
+                new Produit { ProduitId = 1, Nom = "Stylo",        Categorie = "Papeterie",     Prix = 1.50m },
+                new Produit { ProduitId = 2, Nom = "Carnet",       Categorie = "Papeterie",     Prix = 3.75m },
+                new Produit { ProduitId = 3, Nom = "Clé USB 16 Go", Categorie = "Électronique",  Prix = 12.00m },
+                new Produit { ProduitId = 4, Nom = "Casque Audio",  Categorie = "Électronique",  Prix = 45.00m }
             };
             modelBuilder.Entity<Produit>().HasData(produits);
 
-            // Magasins
             var magasins = new List<Magasin>
             {
                 new Magasin { MagasinId = 1, Nom = "Magasin Centre-Ville", Adresse = "10 Rue Principale" },
-                new Magasin { MagasinId = 2, Nom = "Magasin Université",    Adresse = "5 Avenue des Étudiants" },
-                new Magasin { MagasinId = 3, Nom = "Magasin Quartier Nord", Adresse = "23 Boulevard Nord" },
-                new Magasin { MagasinId = 4, Nom = "Magasin Sud-Ouest",     Adresse = "42 Rue du Commerce" }
+                new Magasin { MagasinId = 2, Nom = "Magasin Université",     Adresse = "5 Avenue des Étudiants" },
+                new Magasin { MagasinId = 3, Nom = "Magasin Quartier Nord",  Adresse = "23 Boulevard Nord" },
+                new Magasin { MagasinId = 4, Nom = "Magasin Sud-Ouest",      Adresse = "42 Rue du Commerce" }
             };
             modelBuilder.Entity<Magasin>().HasData(magasins);
 
-            // 3. Initialiser le stock local pour chaque magasin
             var stockLocaux = new List<MagasinStockProduit>();
             foreach (var magasin in magasins)
             {
@@ -48,7 +45,6 @@ namespace MagasinCentral.Data
             }
             modelBuilder.Entity<MagasinStockProduit>().HasData(stockLocaux);
 
-            // Initialiser le stock central
             var stocksCentraux = new List<StockCentral>();
             foreach (var produit in produits)
             {
@@ -60,7 +56,6 @@ namespace MagasinCentral.Data
             }
             modelBuilder.Entity<StockCentral>().HasData(stocksCentraux);
 
-            // Ventes
             var ventes = new List<Vente>
             {
                 new Vente

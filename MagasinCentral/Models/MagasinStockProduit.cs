@@ -11,13 +11,11 @@ namespace MagasinCentral.Models
         /// <summary>
         /// Clé primaire composite (StoreId + ProductId).
         /// </summary>
-        [Key, Column(Order = 0)]
         public int MagasinId { get; set; }
 
         /// <summary>
         /// Clé primaire composite (StoreId + ProductId).
         /// </summary>
-        [Key, Column(Order = 1)]
         public int ProduitId { get; set; }
 
         /// <summary>

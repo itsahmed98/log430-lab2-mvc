@@ -29,7 +29,7 @@ namespace MagasinCentral.Services
             var listeMagasins = await _contexte.Magasins
                 .Include(m => m.Ventes)
                     .ThenInclude(v => v.Produit)
-                .Include(m => m.StockProduits)
+                .Include(m => m.StocksProduits)
                     .ThenInclude(sp => sp.Produit)
                 .ToListAsync();
 
@@ -52,7 +52,7 @@ namespace MagasinCentral.Services
                     .Take(3)
                     .ToList();
 
-                var stocksRestants = magasin.StockProduits
+                var stocksRestants = magasin.StocksProduits
                     .Select(sp => new InfosStockProduit
                     {
                         NomProduit = sp.Produit.Nom,

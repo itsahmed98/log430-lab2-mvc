@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace MagasinCentral.Data
 {
     /// <summary>
-    /// Contexte EF Core pour MagasinCentral.
+    /// Contexte EF Core pour MagasinCentral (PostgreSQL).
     /// </summary>
     public class MagasinDbContext : DbContext
     {
@@ -29,7 +29,7 @@ namespace MagasinCentral.Data
         public DbSet<MagasinStockProduit> MagasinStocksProduits { get; set; } = null!;
 
         /// <summary>
-        /// Table du stock central (represent un entrepôt).
+        /// Table du stock central (represent un entrepôt global).
         /// </summary>
         public DbSet<StockCentral> StocksCentraux { get; set; } = null!;
 
@@ -45,7 +45,15 @@ namespace MagasinCentral.Data
             modelBuilder.Entity<MagasinStockProduit>()
                 .HasKey(ms => new { ms.MagasinId, ms.ProduitId });
 
-            // Appeler le DataSeeder pour pré-remplir les tables et la base de données.
+            modelBuilder.Entity<StockCentral>()
+                .HasKey(sc => sc.ProduitId);
+
+            modelBuilder.Entity<StockCentral>()
+                .HasOne(sc => sc.Produit)
+                .WithOne(p => p.StockCentral)
+                .HasForeignKey<StockCentral>(sc => sc.ProduitId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             DataSeeder.Seed(modelBuilder);
         }
     }
