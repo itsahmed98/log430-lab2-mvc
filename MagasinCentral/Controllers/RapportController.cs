@@ -33,7 +33,8 @@ namespace MagasinCentral.Controllers
             }
             catch (Exception ex)
             {
-                ViewBag.ErrorMessage = "Une erreur est survenue lors de la génération du rapport.";
+                // Log the exception (not implemented here)
+                ViewBag.ErrorMessage = $"Une erreur est survenue lors de la génération du rapport: {ex.Message}";
                 result = View("Error");
             }
 
