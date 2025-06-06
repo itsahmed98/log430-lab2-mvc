@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MagasinCentral.Controllers
 {
     /// <summary>
-    ///     Controller pour UC2 : consulter le stock et demander un réapprovisionnement.
+    ///     Controller pour consulter le stock et demander un réapprovisionnement.
     /// </summary>
     public class ReapprovisionnementController : Controller
     {
@@ -15,7 +15,7 @@ namespace MagasinCentral.Controllers
 
         public ReapprovisionnementController(IReapprovisionnementService reapprisonnementService)
         {
-            _reapprisonnementService = reapprisonnementService;
+            _reapprisonnementService = reapprisonnementService ?? throw new ArgumentNullException(nameof(reapprisonnementService));
         }
 
         /// <summary>
