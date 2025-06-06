@@ -23,7 +23,7 @@ namespace MagasinCentral.Services
 
         public PerformancesService(MagasinDbContext contexte)
         {
-            _contexte = contexte;
+            _contexte = contexte ?? throw new ArgumentNullException(nameof(contexte));
         }
 
         public async Task<PerformancesViewModel> GetPerformances()

@@ -13,7 +13,7 @@ namespace MagasinCentral.Services
 
         public ProduitService(MagasinDbContext contexte)
         {
-            _contexte = contexte;
+            _contexte = contexte ?? throw new ArgumentNullException(nameof(contexte));
         }
 
         /// <inheritdoc />

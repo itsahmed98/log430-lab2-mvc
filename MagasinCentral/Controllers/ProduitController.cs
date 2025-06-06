@@ -36,7 +36,6 @@ namespace MagasinCentral.Controllers
         [HttpGet]
         public async Task<IActionResult> Modifier(int produitId)
         {
-            Console.WriteLine($"Modifier produit avec ID={produitId}");
             var produit = await _produitService.GetProduitByIdAsync(produitId);
             if (produit == null)
             {
