@@ -29,5 +29,15 @@ namespace MagasinCentral.Services
         /// </summary>
         /// <returns></returns>
         Task<List<DemandeReapprovisionnement>> GetDemandesReapprovisionnementAsync();
+
+        /// <summary>
+        /// Récupère uniquement les demandes en statut "EnAttente".
+        /// </summary>
+        Task<List<DemandeReapprovisionnement>> GetDemandesEnAttenteAsync();
+
+        /// <summary>
+        /// Traiter une demande en attente
+        /// </summary>
+        Task TraiterDemandeAsync(int demandeId, bool approuver);
     }
 }
