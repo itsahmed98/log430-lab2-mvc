@@ -52,7 +52,7 @@ namespace MagasinCentral.Services
                     .Take(3)
                     .ToList();
 
-                var stocksRestants = magasin.StocksProduits
+                var stocksRestants = magasin.StockProduits
                     .Select(sp => new InfosStockProduit
                     {
                         NomProduit = sp.Produit.Nom,
