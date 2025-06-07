@@ -1,18 +1,23 @@
-name: Deploy to production virtual machine
+name: CI/CD .NET Docker
 
 on:
   push:
     branches: [main]
 
-jobs:
-  build-test-publish-deploy:
-    runs-on: ubuntu-latest
+env:
+  IMAGE_NAME: magasincentral
+  DOCKERHUB_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/magasincentral
 
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.tag.outputs.IMAGE_TAG }}
     steps:
-      - name: Checkout source code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup .NET
+      - name: Install .NET 8.0 SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
@@ -20,15 +25,26 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build the project
+      - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      - name: Format check (lint)
+      - name: Lint / Format check
         run: dotnet format --verify-no-changes
         continue-on-error: true
 
       - name: Run tests
-        run: dotnet test --no-build --verbosity normal
+        run: dotnet test --configuration Release --no-build --verbosity normal
+
+      - name: Set Docker image tag
+        id: tag
+        run: echo "::set-output name=IMAGE_TAG::$(date +'%Y%m%d%H%M')"
+
+  docker-build-and-push:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -37,23 +53,30 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker image
-        run: docker build -t magasincentral .
+        run: |
+          docker build \
+            --tag $IMAGE_NAME:latest \
+            --tag $DOCKERHUB_REPO:${{ needs.build-and-test.outputs.image-tag }} \
+            .
 
-      - name: Tag Docker image for Docker Hub
-        run: docker tag magasincentral ${{ secrets.DOCKERHUB_USERNAME }}/magasincentral:latest
+      - name: Push Docker image
+        run: |
+          docker push $DOCKERHUB_REPO:latest
+          docker push $DOCKERHUB_REPO:${{ needs.build-and-test.outputs.image-tag }}
 
-      - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/magasincentral:latest
-
-      - name: SSH to remote VM and deploy Docker image
-        uses: appleboy/ssh-action@v1.0.0
+  deploy:
+    needs: docker-build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VM via SSH
+        uses: appleboy/ssh-action@master
         with:
-          host: 10.194.32.236
-          username: log430
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
           password: ${{ secrets.VM_PASSWORD }}
+          port: 22
           script: |
-            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/magasincentral:latest
-            docker stop magasincentral || true
-            docker rm magasincentral || true
-            docker run -d -p 80:80 --name magasincentral ${{ secrets.DOCKERHUB_USERNAME }}/magasincentral:latest
+            cd ~/magasincentral
+            docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_TOKEN }}"
+            docker-compose pull
+            docker-compose up -d --remove-orphans
