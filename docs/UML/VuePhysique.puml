@@ -2,20 +2,23 @@
 skinparam handwritten true
 top to bottom direction
 
-node "Client Browser" as Browser {
+node "Hôte\n(Windows/macOS/Linux)" as Host {
+  node "Client Browser" as Browser {
   [Razor Pages\n(HTML/CSS/JS)] as RazorPages
+  }
+
+  node "Docker Container : MagasinCentral App" as WebServer {
+    component "MagasinCentral.dll\n(Controllers & Views)" as Client
+    component "MagasinCentral.Services.dll\n(Logique métier)" as Services
+    component "MagasinCentral.Data.dll\n(EF Core & Models)" as DataLayer
+  }
+
+  node "Docker Container : postgresql" as database {
+    database "Base de données" as DB
+  }
+
+  Browser --> WebServer : HTTP/HTTPS
+  DataLayer --> database : TCP
 }
 
-node "Service Métier" as WebServer {
-  component "MagasinCentral.dll\n(Controllers & Views)" as Client
-  component "MagasinCentral.Services.dll\n(Logique métier)" as Services
-  component "MagasinCentral.Data.dll\n(EF Core & Models)" as DataLayer
-}
-
-node "PostgreSQL" as database {
-  database "Base de données" as DB
-}
-
-Browser --> WebServer : HTTP/HTTPS
-DataLayer --> database : TCP
 @enduml
