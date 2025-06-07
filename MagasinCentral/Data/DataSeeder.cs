@@ -50,7 +50,7 @@ namespace MagasinCentral.Data
                     {
                         MagasinId = magasin.MagasinId,
                         ProduitId = produit.ProduitId,
-                        Quantite = 50
+                        Quantite = quantiteInitiale
                     });
                 }
             }
