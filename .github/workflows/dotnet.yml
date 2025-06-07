@@ -50,16 +50,16 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build Docker image
-        run: docker build -f MagasinCentral/Dockerfile -t log430-lab2-MagasinCentral .
+        run: docker build -f magasincentral-app/Dockerfile -t log430-lab2-magasincentral-app .
 
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
       - name: Tag Docker image
-        run: docker tag log430-lab2-MagasinCentral docker.io/${{ secrets.DOCKERHUB_USERNAME }}/log430-lab2-MagasinCentral:latest
+        run: docker tag log430-lab2-magasincentral-app docker.io/${{ secrets.DOCKERHUB_USERNAME }}/log430-lab2-magasincentral-app:latest
 
       - name: Push Docker image
-        run: docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/log430-lab2-MagasinCentral:latest
+        run: docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/log430-lab2-magasincentral-app:latest
 
   deploy:
     needs: docker-build-and-push
