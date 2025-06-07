@@ -7,14 +7,13 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    outputs:
-      image-tag: ${{ steps.tag.outputs.IMAGE_TAG }}
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install .NET 8.0 SDK
-        uses: actions/setup-dotnet@v4
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: "8.0.x"
 
@@ -30,10 +29,6 @@ jobs:
 
       - name: Run tests
         run: dotnet test --configuration Release --no-build --verbosity normal
-
-      - name: Set Docker image tag
-        id: tag
-        run: echo "::set-output name=IMAGE_TAG::$(date +'%Y%m%d%H%M')"
 
   docker-build-and-push:
     needs: build-and-test
