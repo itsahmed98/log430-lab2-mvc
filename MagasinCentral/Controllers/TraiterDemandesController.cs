@@ -22,7 +22,6 @@ namespace MagasinCentral.Controllers
         /// <summary>
         /// Affiche la liste des demandes en attente.
         /// </summary>
-        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var demandes = await _reapprovisionnementService.GetDemandesEnAttenteAsync();

@@ -23,5 +23,9 @@ namespace MagasinCentral.Services
         /// Met à jour un produit existant.
         /// </summary>
         Task ModifierProduitAsync(Produit produit);
+
+        /// <summary>Recherche de produits par identifiant, nom ou catégorie.</summary>
+        Task<List<Produit>> RechercherProduitsAsync(string terme);
+
     }
 }

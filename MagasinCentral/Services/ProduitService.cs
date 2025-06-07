@@ -46,5 +46,19 @@ namespace MagasinCentral.Services
             _contexte.Produits.Update(produit);
             await _contexte.SaveChangesAsync();
         }
+
+        /// <inheritdoc />
+        public async Task<List<Produit>> RechercherProduitsAsync(string terme)
+        {
+            terme = terme?.Trim().ToLower() ?? "";
+            return await _contexte.Produits
+                .AsNoTracking()
+                .Where(p =>
+                    p.ProduitId.ToString() == terme ||
+                    p.Nom.ToLower().Contains(terme) ||
+                    (p.Categorie != null && p.Categorie.ToLower().Contains(terme))
+                )
+                .ToListAsync();
+        }
     }
 }

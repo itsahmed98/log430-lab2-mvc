@@ -22,7 +22,6 @@ namespace MagasinCentral.Controllers
         /// <summary>
         /// Afficher la liste des produits disponibles.
         /// </summary>
-        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var model = await _produitService.GetAllProduitsAsync();
@@ -33,7 +32,6 @@ namespace MagasinCentral.Controllers
         /// Modifier un produit existant.
         /// </summary>
         /// <param name="produitId"></param>
-        [HttpGet]
         public async Task<IActionResult> Modifier(int produitId)
         {
             var produit = await _produitService.GetProduitByIdAsync(produitId);
@@ -73,5 +71,21 @@ namespace MagasinCentral.Controllers
 
             return result;
         }
+
+        /// <summary>
+        /// Recherche de produits par identifiant, nom ou catégorie.
+        /// </summary>
+        /// <param name="produit"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Recherche(string produit)
+        {
+            if (string.IsNullOrWhiteSpace(produit))
+                return View(new List<Produit>());
+
+            var résultats = await _produitService.RechercherProduitsAsync(produit);
+            ViewData["Terme"] = produit;
+            return View(résultats);
+        }
+
     }
 }
