@@ -12,6 +12,7 @@ builder.Services.AddScoped<IRapportService, RapportService>();
 builder.Services.AddScoped<IReapprovisionnementService, ReapprovisionnementService>();
 builder.Services.AddScoped<IPerformancesService, PerformancesService>();
 builder.Services.AddScoped<IProduitService, ProduitService>();
+builder.Services.AddScoped<IVenteService, VenteService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

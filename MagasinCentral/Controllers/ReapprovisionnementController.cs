@@ -21,7 +21,6 @@ namespace MagasinCentral.Controllers
         /// <summary>
         ///     Affiche la liste des produits avec stock local et central pour un magasin donné.
         /// </summary>
-        [HttpGet]
         public async Task<IActionResult> Index(int magasinId)
         {
             var listeStocks = await _reapprisonnementService.GetStocksAsync(magasinId);
@@ -52,7 +51,6 @@ namespace MagasinCentral.Controllers
             return RedirectToAction(nameof(Index), new { magasinId });
         }
 
-        [HttpGet]
         public async Task<IActionResult> DemandesReapprovisionnement()
         {
             var demandes = await _reapprisonnementService.GetDemandesReapprovisionnementAsync();
