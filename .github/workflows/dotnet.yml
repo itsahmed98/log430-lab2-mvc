@@ -53,7 +53,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build \
+          echo "Building Docker image with tags: $IMAGE_NAME:latest and $DOCKERHUB_REPO:${{ needs.build-and-test.outputs.image-tag }}"
+          docker build . \
             --tag $IMAGE_NAME:latest \
             --tag $DOCKERHUB_REPO:${{ needs.build-and-test.outputs.image-tag }} \
             .
