@@ -1,19 +1,20 @@
-name: CI/CD .NET Docker
+name: CI/CD .NET + Docker
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   build-and-test:
+    name: Build & Test
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
 
@@ -31,29 +32,33 @@ jobs:
         run: dotnet test --configuration Release --no-build --verbosity normal
 
   docker-build-and-push:
+    name: Build & Push Docker image
     needs: build-and-test
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Build Docker image
-        run: docker build -t magasincentral-mvc .
+        run: |
+          docker build \
+            --tag docker.io/${{ secrets.DOCKERHUB_USERNAME }}/magasincentral-mvc:latest \
+            .
 
       - name: Login to Docker Hub
-        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-
-      - name: Tag Docker image
-        run: docker tag magasincentral-mvc docker.io/${{ secrets.DOCKERHUB_USERNAME }}/magasincentral-mvc:latest
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login \
+          --username "${{ secrets.DOCKERHUB_USERNAME }}" \
+          --password-stdin
 
       - name: Push Docker image
         run: docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/magasincentral-mvc:latest
 
   deploy:
+    name: Deploy to VM via SSH
     needs: docker-build-and-push
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to VM via SSH
+      - name: SSH & deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VM_HOST }}
