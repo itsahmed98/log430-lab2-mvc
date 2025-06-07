@@ -2,6 +2,8 @@
 
 ## Répo GitHub (public)
 
+- https://github.com/itsahmed98/log430-lab0
+- https://github.com/itsahmed98/log430-lab1
 - https://github.com/itsahmed98/log430-lab2-mvc
 
 ---
