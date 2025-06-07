@@ -111,11 +111,11 @@ Base de données PostgreSQL:
 
 ### Processus - Modifier un produit
 
-[Processus](../out/docs/UML/ProcessView-ModifierProduit/)
+[Processus](../out/docs/UML/ProcessView-ModifierProduit/Process%20View%20-%20Modifier%20un%20Produit.svg)
 
 ### Processus - Obtenir rapport consolidé
 
-[Processus](../out/docs/UML/ProcessView-RapportConsolide/)
+[Processus](../out/docs/UML/ProcessView-RapportConsolide/Process%20View%20-%20Génere%20un%20Rapport%20Consolidé.svg)
 
 # 7 Vue de déploiement
 
