@@ -38,24 +38,21 @@ jobs:
   docker-build-and-push:
     needs: build-and-test
     runs-on: ubuntu-latest
-    env:
-      IMAGE_NAME: magasincentral
-      DOCKERHUB_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/magasincentral
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Build Docker image
-        run: docker build -t $IMAGE_NAME .
+        run: docker build -t magasincentral-mvc .
 
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
       - name: Tag Docker image
-        run: docker tag $IMAGE_NAME docker.io/${{ secrets.DOCKERHUB_USERNAME }}/magasincentral:${{ needs.build-and-test.outputs.image-tag }}
+        run: docker tag magasincentral-mvc docker.io/${{ secrets.DOCKERHUB_USERNAME }}/magasincentral-mvc:latest
 
       - name: Push Docker image
-        run: docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/magasincentral:${{ needs.build-and-test.outputs.image-tag }}
+        run: docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/magasincentral:latest
 
   deploy:
     needs: docker-build-and-push
