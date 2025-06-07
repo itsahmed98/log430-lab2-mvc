@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace MagasinCentral.Services
 {
     /// <summary>
-    ///     Définit les opérations pour UC3 : génération des données du tableau de bord.
+    /// Interface pour visualiser les performances.
     /// </summary>
     public interface IPerformancesService
     {

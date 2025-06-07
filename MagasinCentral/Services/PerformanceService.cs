@@ -16,8 +16,7 @@ namespace MagasinCentral.Services
     {
         private readonly MagasinDbContext _contexte;
         /// <summary>
-        ///     Seuil de surstock local (modifiable selon vos besoins).
-        ///     Si QuantiteLocale > SurstockSeuil, on considère que c’est un produit en surstock.
+        ///     Seuil de surstock local.
         /// </summary>
         private const int seuilSurstock = 100;
 
