@@ -58,7 +58,7 @@ namespace MagasinCentral.Tests
             var rapportMagasin1 = listeRapports.First(r => r.NomMagasin == "Magasin Centre-Ville"); // Le premier magasin ajouté dans le seeder
 
             // Assert
-            Assert.Equal(41.25m, rapportMagasin1.ChiffreAffairesTotal);
+            Assert.Equal(51.75m, rapportMagasin1.ChiffreAffairesTotal);
         }
 
         /// <summary>

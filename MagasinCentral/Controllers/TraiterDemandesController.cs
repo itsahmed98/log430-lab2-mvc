@@ -37,6 +37,7 @@ namespace MagasinCentral.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Traiter(int demandeId, bool approuver)
         {
+            Console.WriteLine($"Traitement de la demande {demandeId} : {(approuver ? "Approuver" : "Refuser")}");
             try
             {
                 await _reapprovisionnementService.TraiterDemandeAsync(demandeId, approuver);
