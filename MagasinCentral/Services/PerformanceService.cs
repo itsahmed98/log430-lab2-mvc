@@ -38,13 +38,13 @@ namespace MagasinCentral.Services
                 .AsNoTracking()
                 .ToListAsync();
 
-            var ventesParMagasin = await _contexte.Ventes
+            var ventesParMagasin = await _contexte.LignesVente
                 .AsNoTracking()
-                .GroupBy(v => v.MagasinId)
+                .GroupBy(l => l.Vente.MagasinId)
                 .Select(g => new
                 {
                     MagasinId = g.Key,
-                    ChiffreAffaires = g.Sum(v => v.PrixUnitaire * v.Quantite)
+                    ChiffreAffaires = g.Sum(l => l.PrixUnitaire * l.Quantite)
                 })
                 .ToListAsync();
 
@@ -53,13 +53,11 @@ namespace MagasinCentral.Services
                 var infoVente = ventesParMagasin
                     .FirstOrDefault(x => x.MagasinId == magasin.MagasinId);
 
-                decimal ca = infoVente?.ChiffreAffaires ?? 0m;
-
                 viewModel.RevenusParMagasin.Add(new RevenuMagasin
                 {
                     MagasinId = magasin.MagasinId,
                     NomMagasin = magasin.Nom,
-                    ChiffreAffaires = ca
+                    ChiffreAffaires = infoVente?.ChiffreAffaires ?? 0m
                 });
             }
 
@@ -113,23 +111,25 @@ namespace MagasinCentral.Services
             DateTime aujourdHui = DateTime.UtcNow.Date;
             DateTime semainePasse = aujourdHui.AddDays(-6);
 
-            var ventesDerniereSemaine = await _contexte.Ventes
+            var ventesDerniereSemaine = await _contexte.LignesVente
                 .AsNoTracking()
-                .Where(v => v.Date >= semainePasse &&
-                            v.Date < aujourdHui.AddDays(1))
+                .Include(l => l.Vente)
+                .Where(l =>
+                    l.Vente.Date >= semainePasse &&
+                    l.Vente.Date < aujourdHui.AddDays(1))
                 .ToListAsync();
 
             var regroupement = ventesDerniereSemaine
-                .GroupBy(v => new
+                .GroupBy(l => new
                 {
-                    v.MagasinId,
-                    Jour = v.Date.Date
+                    PharmacyId = l.Vente.MagasinId,
+                    Jour = l.Vente.Date.Date
                 })
                 .Select(g => new
                 {
-                    MagasinId = g.Key.MagasinId,
+                    MagasinId = g.Key.PharmacyId,
                     Jour = g.Key.Jour,
-                    MontantTotal = g.Sum(v => v.PrixUnitaire * v.Quantite)
+                    MontantTotal = g.Sum(l => l.PrixUnitaire * l.Quantite)
                 })
                 .ToList();
 

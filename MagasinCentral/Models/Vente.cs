@@ -25,32 +25,14 @@ namespace MagasinCentral.Models
         public int MagasinId { get; set; }
 
         /// <summary>
-        /// Clé étrangère vers le produit.
-        /// </summary>
-        [Required]
-        public int ProduitId { get; set; }
-
-        /// <summary>
-        /// Quantité vendue.
-        /// </summary>
-        [Required]
-        public int Quantite { get; set; }
-
-        /// <summary>
-        /// Prix unitaire appliqué lors de la vente.
-        /// </summary>
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal PrixUnitaire { get; set; }
-
-        /// <summary>
         /// Propriété de navigation vers le magasin.
         /// </summary>
         public Magasin Magasin { get; set; } = null!;
 
         /// <summary>
-        /// Propriété de navigation vers le produit.
+        ///   Toutes les lignes associées à cette vente.
         /// </summary>
-        public Produit Produit { get; set; } = null!;
+        public ICollection<LigneVente> Lignes { get; set; } = new List<LigneVente>();
+
     }
 }

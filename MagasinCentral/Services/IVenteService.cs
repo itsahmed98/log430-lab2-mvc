@@ -14,7 +14,7 @@ namespace MagasinCentral.Services
         /// </summary>
         /// <param name="magasinId">La magasin dont la vente est faite</param>
         /// <param name="lignes">Ligne de ventes</param>
-        Task EnregistrerVenteAsync(int magasinId, List<(int produitId, int quantite)> lignes);
+        Task<int> CreerVenteAsync(int magasinId, List<(int produitId, int quantite)> lignes);
 
         /// <summary>
         /// Annuler une vente existante.

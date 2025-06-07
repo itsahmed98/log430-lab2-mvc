@@ -17,44 +17,47 @@ namespace MagasinCentral.Services
         }
 
         /// <inheritdoc />
-        public async Task EnregistrerVenteAsync(int magasinId, List<(int produitId, int quantite)> lignes)
+        public async Task<int> CreerVenteAsync(int magasinId, List<(int produitId, int quantite)> lignes)
         {
-            if (!lignes.Any()) throw new ArgumentException("Pas de lignes de vente.");
-            var now = DateTime.UtcNow;
-            foreach (var (pid, qte) in lignes)
+            if (!lignes.Any()) throw new ArgumentException("Aucune ligne.");
+            var vente = new Vente { MagasinId = magasinId, Date = DateTime.UtcNow };
+            foreach (var (pid, q) in lignes.Where(x => x.quantite > 0))
             {
-                var produit = await _contexte.Produits.FindAsync(pid)
-                    ?? throw new ArgumentException($"Produit {pid} inconnu");
-                var stockLocal = await _contexte.MagasinStocksProduits
-                    .FirstOrDefaultAsync(ms => ms.MagasinId == magasinId && ms.ProduitId == pid);
-                if (stockLocal == null || stockLocal.Quantite < qte)
-                    throw new InvalidOperationException($"Stock insuffisant pour le produit {pid}");
-
-                stockLocal.Quantite -= qte;
-
-                var vente = new Vente
+                var prod = await _contexte.Produits.FindAsync(pid);
+                var prix = prod?.Prix ?? throw new ArgumentException($"Produit {pid} invalide");
+                // Ajuster stock local ici…
+                vente.Lignes.Add(new LigneVente
                 {
-                    Date = now,
-                    MagasinId = magasinId,
                     ProduitId = pid,
-                    Quantite = qte,
-                    PrixUnitaire = produit.Prix
-                };
-                _contexte.Ventes.Add(vente);
+                    Quantite = q,
+                    PrixUnitaire = prix
+                });
             }
+            _contexte.Ventes.Add(vente);
             await _contexte.SaveChangesAsync();
+            return vente.VenteId;
         }
 
         /// <inheritdoc />
         public async Task AnnulerVenteAsync(int venteId)
         {
-            var vente = await _contexte.Ventes.FindAsync(venteId)
+            var vente = await _contexte.Ventes
+                .Include(v => v.Lignes)
+                .FirstOrDefaultAsync(v => v.VenteId == venteId)
                 ?? throw new ArgumentException("Vente introuvable.");
-            // restituer stock local
-            var stock = await _contexte.MagasinStocksProduits
-                .FirstOrDefaultAsync(ms => ms.MagasinId == vente.MagasinId && ms.ProduitId == vente.ProduitId);
-            if (stock != null) stock.Quantite += vente.Quantite;
-            // supprimer la vente
+
+            // pour chaque ligne, restituer la quantité
+            foreach (var l in vente.Lignes)
+            {
+                var stock = await _contexte.MagasinStocksProduits
+                    .FirstOrDefaultAsync(ms =>
+                        ms.MagasinId == vente.MagasinId &&
+                        ms.ProduitId == l.ProduitId);
+
+                if (stock != null)
+                    stock.Quantite += l.Quantite;
+            }
+
             _contexte.Ventes.Remove(vente);
             await _contexte.SaveChangesAsync();
         }
@@ -64,7 +67,8 @@ namespace MagasinCentral.Services
         {
             return await _contexte.Ventes
                 .Include(v => v.Magasin)
-                .Include(v => v.Produit)
+                .Include(v => v.Lignes)
+                    .ThenInclude(l => l.Produit)
                 .OrderByDescending(v => v.Date)
                 .ToListAsync();
         }

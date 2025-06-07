@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MagasinCentral.Services;
 using MagasinCentral.Data;
 using Microsoft.EntityFrameworkCore;
+using MagasinCentral.Models;
 
 namespace MagasinCentral.Controllers;
 
@@ -34,13 +35,8 @@ public class VenteController : Controller
     /// <param name="magasinId"></param>
     public async Task<IActionResult> Enregistrer(int? magasinId)
     {
-        var magasins = await _contexte.Magasins
-            .AsNoTracking()
-            .ToListAsync();
-
-        ViewData["Magasins"] = magasins;
+        ViewData["Magasins"] = await _contexte.Magasins.ToListAsync();
         ViewData["MagasinId"] = magasinId ?? 0;
-
         var produits = await _produitService.GetAllProduitsAsync();
         return View(produits);
     }
@@ -52,22 +48,24 @@ public class VenteController : Controller
     /// <param name="magasinId"></param>
     /// <param name="produitId"></param>
     /// <param name="quantite"></param>
-    [HttpPost]
-    [ValidateAntiForgeryToken]
+    [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Enregistrer(int magasinId, List<int> produitId, List<int> quantite)
     {
-        var lignes = produitId.Zip(quantite, (id, q) => (id, q)).ToList();
-        try
+        if (magasinId <= 0)
+            return BadRequest("Magasin invalide, veuillez en sélectionner un.");
+
+        var lignes = produitId
+            .Select((id, i) => (id, quantite[i]))
+            .Where(x => x.Item2 > 0)
+            .ToList();
+        if (!lignes.Any())
         {
-            await _venteService.EnregistrerVenteAsync(magasinId, lignes);
-            TempData["Succès"] = "Vente enregistrée";
-            return RedirectToAction("Index", "Rapport");
-        }
-        catch (Exception ex)
-        {
-            TempData["Erreur"] = ex.Message;
+            TempData["Erreur"] = "Veuillez sélectionner au moins 1 produit.";
             return RedirectToAction(nameof(Enregistrer), new { magasinId });
         }
+        var venteId = await _venteService.CreerVenteAsync(magasinId, lignes);
+        TempData["Succès"] = $"Vente #{venteId} créée.";
+        return RedirectToAction(nameof(Liste));
     }
 
     /// <summary>
@@ -95,8 +93,8 @@ public class VenteController : Controller
     /// </summary>
     public async Task<IActionResult> Liste()
     {
-        var ventes = await _venteService.GetVentesAsync();
-        return View("ListeVentes", ventes);
+        List<Vente> ventes = await _venteService.GetVentesAsync();
+        return View(ventes);
     }
 
 

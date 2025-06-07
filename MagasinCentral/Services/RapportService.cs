@@ -26,9 +26,11 @@ namespace MagasinCentral.Services
         /// <inheritdoc />
         public async Task<List<RapportDto>> ObtenirRapportConsolideAsync()
         {
+            // Charger tous les magasins, leurs ventes et les lignes de ventes + produits
             var listeMagasins = await _contexte.Magasins
                 .Include(m => m.Ventes)
-                    .ThenInclude(v => v.Produit)
+                    .ThenInclude(v => v.Lignes)
+                        .ThenInclude(l => l.Produit)
                 .Include(m => m.StocksProduits)
                     .ThenInclude(sp => sp.Produit)
                 .ToListAsync();
@@ -37,11 +39,15 @@ namespace MagasinCentral.Services
 
             foreach (var magasin in listeMagasins)
             {
+                // Calcul du CA = somme de toutes les lignes de toutes les ventes
                 decimal chiffreAffaires = magasin.Ventes
-                    .Sum(v => v.PrixUnitaire * v.Quantite);
+                    .SelectMany(v => v.Lignes)
+                    .Sum(l => l.Quantite * l.PrixUnitaire);
 
+                // Top 3 produits par quantité vendue
                 var topProduits = magasin.Ventes
-                    .GroupBy(v => v.Produit)
+                    .SelectMany(v => v.Lignes)
+                    .GroupBy(l => l.Produit)
                     .Select(g => new InfosVenteProduit
                     {
                         NomProduit = g.Key.Nom,
@@ -52,6 +58,7 @@ namespace MagasinCentral.Services
                     .Take(3)
                     .ToList();
 
+                // Stocks restants local
                 var stocksRestants = magasin.StocksProduits
                     .Select(sp => new InfosStockProduit
                     {
@@ -73,12 +80,11 @@ namespace MagasinCentral.Services
                 .Include(sc => sc.Produit)
                 .ToListAsync();
 
-            var rapportStockCentral = new RapportDto
+            rapports.Add(new RapportDto
             {
                 NomMagasin = "Stock Central",
                 ChiffreAffairesTotal = 0m,
                 TopProduits = new List<InfosVenteProduit>(),
-
                 StocksRestants = listeStockCentral
                     .Select(sc => new InfosStockProduit
                     {
@@ -86,9 +92,7 @@ namespace MagasinCentral.Services
                         QuantiteRestante = sc.Quantite
                     })
                     .ToList()
-            };
-
-            rapports.Add(rapportStockCentral);
+            });
 
             return rapports;
         }

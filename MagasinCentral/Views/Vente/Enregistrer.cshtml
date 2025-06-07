@@ -1,16 +1,13 @@
-@model List<MagasinCentral.Models.Produit>
+@model List<Produit>
 @{
-    ViewData["Title"] = "Nouvelle vente";
-    // Récupérer la liste des magasins
+    var magasinId = (int)(ViewData["MagasinId"] ?? 0);
     var magasins = (List<MagasinCentral.Models.Magasin>)ViewData["Magasins"];
-    var magasinId = (int)ViewData["MagasinId"];
 }
 
 <h1 class="mt-4">Nouvelle vente</h1>
 
 @if (magasinId == 0)
 {
-    <!-- Si aucun magasin choisi, on affiche un dropdown simple -->
     <form asp-action="Enregistrer" method="get" class="form-inline mb-4">
         <label for="magasinSelect" class="mr-2">Choisissez votre magasin :</label>
         <select id="magasinSelect" name="magasinId" class="form-control form-control-sm mr-2" required>
@@ -26,12 +23,11 @@
 else
 {
     <h2>Magasin : @magasins.First(m => m.MagasinId == magasinId).Nom</h2>
-
     <form asp-action="Enregistrer" method="post">
         @Html.AntiForgeryToken()
         <input type="hidden" name="magasinId" value="@magasinId" />
 
-        <table class="table table-sm">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Produit</th>
@@ -49,7 +45,7 @@ else
                         </td>
                         <td>@Model[i].Prix.ToString("C")</td>
                         <td>
-                            <input type="number" name="quantite" value="0" min="1" class="form-control form-control-sm" />
+                            <input type="number" name="quantite" min="0" value="0" class="form-control form-control-sm" />
                         </td>
                     </tr>
                 }

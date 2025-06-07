@@ -69,44 +69,22 @@ namespace MagasinCentral.Data
 
             var ventes = new List<Vente>
             {
-                new Vente
-                {
-                    VenteId      = 1,
-                    Date         = DateTime.UtcNow.AddDays(-2),
-                    MagasinId    = 1,
-                    ProduitId    = 1,
-                    Quantite     = 10,
-                    PrixUnitaire = 1.50m
-                },
-                new Vente
-                {
-                    VenteId      = 2,
-                    Date         = DateTime.UtcNow.AddDays(-1),
-                    MagasinId    = 2,
-                    ProduitId    = 3,
-                    Quantite     = 5,
-                    PrixUnitaire = 12.00m
-                },
-                new Vente
-                {
-                    VenteId      = 3,
-                    Date         = DateTime.UtcNow.AddDays(-1),
-                    MagasinId    = 1,
-                    ProduitId    = 2,
-                    Quantite     = 7,
-                    PrixUnitaire = 3.75m
-                },
-                new Vente
-                {
-                    VenteId      = 4,
-                    Date         = DateTime.UtcNow,
-                    MagasinId    = 3,
-                    ProduitId    = 4,
-                    Quantite     = 2,
-                    PrixUnitaire = 45.00m
-                }
+                new Vente { VenteId = 1, MagasinId = 1, Date = DateTime.UtcNow.AddDays(-2) },
+                new Vente { VenteId = 2, MagasinId = 2, Date = DateTime.UtcNow.AddDays(-1) },
+                new Vente { VenteId = 3, MagasinId = 1, Date = DateTime.UtcNow.AddDays(-1) },
+                new Vente { VenteId = 4, MagasinId = 3, Date = DateTime.UtcNow }
             };
             modelBuilder.Entity<Vente>().HasData(ventes);
+
+            var lignesVente = new List<LigneVente>
+            {
+                new LigneVente { LigneVenteId = 1, VenteId = 1, ProduitId = 1, Quantite = 2, PrixUnitaire = 1.50m },
+                new LigneVente { LigneVenteId = 2, VenteId = 1, ProduitId = 2, Quantite = 1, PrixUnitaire = 3.75m },
+                new LigneVente { LigneVenteId = 3, VenteId = 2, ProduitId = 3, Quantite = 5, PrixUnitaire = 12.00m },
+                new LigneVente { LigneVenteId = 4, VenteId = 3, ProduitId = 4, Quantite = 1, PrixUnitaire = 45.00m },
+                new LigneVente { LigneVenteId = 5, VenteId = 4, ProduitId = 1, Quantite = 3, PrixUnitaire = 1.50m }
+            };
+            modelBuilder.Entity<LigneVente>().HasData(lignesVente);
         }
     }
 }

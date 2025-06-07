@@ -43,6 +43,11 @@ namespace MagasinCentral.Data
         /// </summary>
         public DbSet<DemandeReapprovisionnement> DemandesReapprovisionnement { get; set; } = null!;
 
+        /// <summary>
+        /// Table des lignes de vente (détails des produits vendus dans chaque vente).
+        /// </summary>
+        public DbSet<LigneVente> LignesVente { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -70,6 +75,11 @@ namespace MagasinCentral.Data
                 .WithMany(p => p.DemandesReapprovisionnement)
                 .HasForeignKey(d => d.ProduitId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<LigneVente>()
+                .HasOne(l => l.Vente)
+                .WithMany(v => v.Lignes)
+                .HasForeignKey(l => l.VenteId);
 
             DataSeeder.Seed(modelBuilder);
         }
