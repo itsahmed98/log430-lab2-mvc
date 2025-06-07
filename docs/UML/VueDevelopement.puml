@@ -1,0 +1,48 @@
+@startuml "Vue Developement - Magasin Central"
+title Vue Developement - Magasin Central
+package "MagasinCentral.Web" <<component>> {
+  [Controllers.dll]
+    note right
+      • ProduitController  
+      • RapportController
+      • PerformanceController
+      • ReapprovisionnementController
+      • TraiterDemandesController
+    end note
+}
+
+package "MagasinCentral.Services" <<component>> {
+  [Services.dll]
+    note right
+      • IProduitService / ProduitService  
+      • IRapportService / RapportService
+      • IPerformancesService / PerformancesService  
+      • IReapprovisionnementService / ReapprovisionnementService  
+    end note
+}
+
+package "MagasinCentral.Data" <<component>> {
+  [Data.dll]
+    note right
+      • MagasinDbContext  
+    end note
+}
+
+package "MagasinCentral.Models" <<component>> {
+  [Models.dll]
+    note right
+        • Magasin
+        • Produit
+        • MagasinStockProduit
+        • StockCentral
+        • Vente
+        • DemandeReapprovisionnement 
+    end note
+}
+
+"MagasinCentral.Web" --> "MagasinCentral.Services" : utilise les services pour le logique métier
+"MagasinCentral.Services" --> "MagasinCentral.Models" : manipule les modeles
+"MagasinCentral.Services" --> "MagasinCentral.Data" : Accèder des données
+"MagasinCentral.Data" --> "MagasinCentral.Models" : Mapper les modèles aux entités de la base de données
+
+@enduml

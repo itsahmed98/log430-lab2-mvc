@@ -1,0 +1,75 @@
+@startuml "Vue Logique - Magasin Central"
+title Vue Logique - Magasin Central
+top to bottom direction
+skinparam class {
+  BackgroundColor White
+  ArrowColor SeaGreen
+}
+
+package "MagasinCentral" {
+    Package "Models" {
+        class Produit {
+            +int ProduitId
+            +string Nom
+            +string Categorie
+            +decimal Prix
+            +string Description
+        }
+        class Magasin {
+            +int MagasinId
+            +string Nom
+            +string Adresse
+        }
+        class MagasinStockProduit {
+            +int MagasinId
+            +int ProduitId
+            +int Quantite
+        }
+        class StockCentral {
+            +int ProduitId
+            +int Quantite
+        }
+        class Vente {
+            +int VenteId
+            +DateTime Date
+            +int MagasinId
+            +int ProduitId
+            +int Quantite
+            +decimal PrixUnitaire
+        }
+        class DemandeReapprovisionnement {
+            +int DemandeId
+            +int MagasinId
+            +int ProduitId
+            +int QuantiteDemandee
+            +DateTime DateDemande
+            +string Statut
+        }
+    }
+
+    package "Controllers" {
+        class ProduitController {}
+        class RapportController {}
+        class TraiterDemandesController {}
+        class PerformancesController {}
+        class ReapprovisionnementController {}
+    }
+
+    package "Services" {
+        class ProduitService {}
+        class RapportService {}
+        class TraiterDemandesService {}
+        class PerformancesService {}
+        class ReapprovisionnementService {}
+    }
+}
+
+
+Magasin "1" -- "0..*" MagasinStockProduit : stocks
+Produit "1" -- "0..*" MagasinStockProduit
+Produit "1" -- "1" StockCentral
+Magasin "1" -- "0..*" Vente
+Produit "1" -- "0..*" Vente
+Magasin "1" -- "0..*" DemandeReapprovisionnement
+Produit "1" -- "0..*" DemandeReapprovisionnement
+@enduml
