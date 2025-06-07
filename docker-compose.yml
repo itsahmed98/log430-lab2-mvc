@@ -23,7 +23,7 @@ services:
 
   # Application .NET Core
   app:
-    image: ${{ secrets.DOCKERHUB_USERNAME }}/magasincentral:latest
+    image: itsahmed98/magasincentral:latest
     container_name: magasincentral-app
     restart: unless-stopped
     depends_on:
