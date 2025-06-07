@@ -64,20 +64,25 @@ jobs:
           password: ${{ secrets.VM_PASSWORD }}
           port: 22
           script: |
-            # if the directory doesn't exist, clone it; otherwise pull latest
+            set -e
+
+            # clone once, then on every run reset to main
             if [ ! -d ~/magasincentral ]; then
-              git clone https://github.com/itsahmed98/log430-lab2-mvc.git ~/magasincentral
-            else
-              cd ~/magasincentral
-              git fetch --all
-              git reset --hard origin/main
+              git clone https://github.com/ahmedsherif98/magasincentral-mvc.git ~/magasincentral
             fi
-
-            # move into the folder with your docker-compose.yml
             cd ~/magasincentral
+            git fetch --all
+            git reset --hard origin/main
 
-            # login & deploy
-            docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" \
-                         -p "${{ secrets.DOCKERHUB_TOKEN }}"
+            # log into Docker Hub
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" \
+              | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+            # tear down old containers
+            docker-compose down --remove-orphans
+
+            # pull new images (if you push to Docker Hub)
             docker-compose pull
-            docker-compose up -d --remove-orphans
+
+            # rebuild & start fresh
+            docker-compose up -d --build --remove-orphans
