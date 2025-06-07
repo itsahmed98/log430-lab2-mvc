@@ -5,7 +5,7 @@ WORKDIR /app
 # Copy project files
 COPY *.sln .
 COPY MagasinCentral/*.csproj ./MagasinCentral/
-COPY MagasinCentral.Test/*.csproj ./MagasinCentral.Test/
+COPY MagasinCentral.Test/*.csproj ./MagasinCentral.Tests/
 
 # Restore dependencies
 RUN dotnet restore
