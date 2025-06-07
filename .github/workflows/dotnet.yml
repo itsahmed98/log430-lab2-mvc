@@ -56,7 +56,7 @@ jobs:
     needs: docker-build-and-push
     runs-on: self-hosted
     steps:
-      - name: SSH & deploy
+      - name: SSH & deploy to VM
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VM_HOST }}
