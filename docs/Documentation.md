@@ -1,8 +1,20 @@
+# 0. Utilisation du IA
+
+J'aimerai noter que j'ai bénificier de l'utilisation du IA pour la plupart des pages web (html et razor) et le coté front-end de l'application. Avec ma très peu d'experience en technologies UI et langauges (html/css, razor pages, etc.), j'ai trouvé qu'il était très difficile pour faire la conception du coté front-end de l'application.
+
 # 1. Introduction et buts
 
-## 1.1 Apercu des exigences
+Fin de l'étape 1 (Laboratoires 0, 1, et 2). Cette étape introductif à pour but de nous introduire à l'évolution d'un système selon les besoins des clients. Dans le laboratoire 1, il a été suffit de faire une application simple pour un petit magasin avec 3 caisses avec une architecture simple : 2-tier client server. Avec le succès inattendu de ce magasin, le client à décidé de étendre son magasin et faire plusieurs secteurs partout dans la ville. Il necessite aussi de pouvoir faire la gestion et la surveillance de toutes ses magasins dans la ville à travers un interface simple et intuitive.
 
-Une application Web qui offre des fonctionnalités pour la gestion de chaine de magasins
+Cette premiere étape est cruciale à la compréhension de l'importance d'une bonne architecture du système. Il est necessaire de concevoir nos système de sorte que nous sommes prêts à son évolution.
+
+On a remarqué que pour le Laboratoire un, une application à 2 couches (client-server) est facile à concevoir et rapide à finir. Par contre, lorsque le volume augment (ex: nombres des clients - caisses), la surcharge sur la base de données augmente enormement. Cette surcharge est dangereuse car ca affecte les attribute de qualité du système, en d'autres mot: Les exigences non-fonctionnelles.
+
+Cette surcharge reduit la cohérance de données dans la base de données, la performance, la rapidité, la scalabilité.
+
+Vous trouverez dans ce rapport tout information concernant l'application évolutive. J'explique les cas d'utilisations, exigences fonctionnelles et non fonctionnelles, les contraintes, ainsi que des diagrammes illustrant chaque point de vue du système (4+1 viewpoints de Philippe Kruchten)
+
+## 1.1 Apercu des exigences
 
 ### Exigences Fonctionnelles
 
@@ -14,16 +26,24 @@ Une application Web qui offre des fonctionnalités pour la gestion de chaine de 
 | EF04 | L’application doit permettre au gestionnaire de visualiser les performances des magasins dans un tableau de bord.                    |
 | EF05 | L’application doit permettre au responsable de modifier un produit depuis la maison mère.                                            |
 | EF06 | L’application doit permettre au responsable de valider une demande de réapprovisionnement.                                           |
+| EF07 | l'application doit permettre à l'employée de chercher un produit par sont identifiant, nom ou catégorie                              |
+| EF08 | l'application doit permettre l'enregistrement des ventes                                                                             |
+| EF09 | L'application doit offrir une gestion des retours des produits                                                                       |
+| EF10 | L'application doit permettre à l'employée de consulter l'état du stock des produits                                                  |
 
 ### Les cas d'utilisation du système
 
-| Id  | Fonction                                                         |
-| --- | ---------------------------------------------------------------- |
-| UC1 | Générer un rapport consolidé des ventes                          |
-| UC2 | Consulter le stock central et déclencher un réapprovisionnement  |
-| UC3 | Visualiser les performances des magasins dans un tableau de bord |
-| UC4 | Mettre à jour les produits depuis la maison mère                 |
-| UC6 | Approvisionner un magasin depuis le centre logistique            |
+| Id   | Fonction                                                          |
+| ---- | ----------------------------------------------------------------- |
+| UC1  | Générer un rapport consolidé des ventes                           |
+| UC2  | Consulter le stock central et déclencher un réapprovisionnement   |
+| UC3  | Visualiser les performances des magasins dans un tableau de bord  |
+| UC4  | Mettre à jour les produits depuis la maison mère                  |
+| UC6  | Approvisionner un magasin depuis le centre logistique             |
+| UC7  | Rechercher un produit (Par identifiant, nom ou catégorie)         |
+| UC8  | Enregistrer une vente (s´election de produits et calcul du total) |
+| UC9  | G´erer les retours (annuler une vente)                            |
+| UC10 | Consulter l’´etat du stock des produits                           |
 
 ## 1.2 Qualité à atteindre
 
@@ -143,7 +163,7 @@ Acceptée
 
 ### Contexte
 
-Je dois développer une application de caisse avec une interface console, une persistance robuste, et une compatibilité avec CI/CD et Docker. Il est nécessaire de choisir un langage, une base de données, et une méthode d’accès aux données (ORM) adaptée.
+Je dois développer une application web MVC avec une persistance robuste, et une compatibilité avec CI/CD et Docker. Il est nécessaire de choisir un langage, une base de données, et une méthode d’accès aux données (ORM) adaptée.
 
 ### Décision
 
