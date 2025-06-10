@@ -1,6 +1,7 @@
 using MagasinCentral.Data;
 using MagasinCentral.Services;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 
 namespace MagasinCentral.Tests.Services
 {
@@ -28,13 +29,19 @@ namespace MagasinCentral.Tests.Services
         [Fact]
         public async Task CreerVenteAsync_ValidData_CreatesVente()
         {
+
             // Arrange
             var magasinId = 1;
             var lignes = new List<(int produitId, int quantite)>
             {
-                (1, 2),
+                (3, 2),
                 (2, 3)
             };
+
+            var serviceMock = new Mock<IVenteService>();
+            serviceMock
+                .Setup(s => s.CreerVenteAsync(magasinId, lignes))
+                .ReturnsAsync(1);
 
             var context = await CreateInMemoryContextAsync();
             var venteService = new VenteService(context);
