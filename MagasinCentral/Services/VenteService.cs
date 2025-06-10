@@ -19,19 +19,43 @@ namespace MagasinCentral.Services
         /// <inheritdoc />
         public async Task<int> CreerVenteAsync(int magasinId, List<(int produitId, int quantite)> lignes)
         {
-            if (!lignes.Any()) throw new ArgumentException("Aucune ligne.");
+            if (!lignes.Any())
+                throw new ArgumentException("Aucune ligne.");
+
             var vente = new Vente { MagasinId = magasinId, Date = DateTime.UtcNow };
+
             foreach (var (pid, q) in lignes.Where(x => x.quantite > 0))
             {
                 var prod = await _contexte.Produits.FindAsync(pid);
                 var prix = prod?.Prix ?? throw new ArgumentException($"Produit {pid} invalide");
-                // Ajuster stock local ici…
+
                 vente.Lignes.Add(new LigneVente
                 {
                     ProduitId = pid,
                     Quantite = q,
                     PrixUnitaire = prix
                 });
+
+                MagasinStockProduit stockLocal = await _contexte.MagasinStocksProduits
+                    .FirstOrDefaultAsync(ms => ms.MagasinId == magasinId && ms.ProduitId == pid);
+
+                if (stockLocal == null)
+                {
+                    // Si le stock n'existe pas, on le crée avec une quantité de 0
+                    stockLocal = new MagasinStockProduit
+                    {
+                        MagasinId = magasinId,
+                        ProduitId = pid,
+                        Quantite = 0
+                    };
+                    _contexte.MagasinStocksProduits.Add(stockLocal);
+                }
+
+                if (stockLocal.Quantite < q)
+                    throw new InvalidOperationException($"Stock insuffisant pour le produit {pid} dans le magasin {magasinId}.");
+
+                stockLocal.Quantite -= q; // Décrémente la quantité du stock local
+
             }
             _contexte.Ventes.Add(vente);
             await _contexte.SaveChangesAsync();
